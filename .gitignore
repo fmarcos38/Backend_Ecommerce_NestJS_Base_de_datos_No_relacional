@@ -33,3 +33,9 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+#le digo q cualqr extension terminada en .env la ignore
+.env
+
+#carpeta de la DB
+/mongo_data

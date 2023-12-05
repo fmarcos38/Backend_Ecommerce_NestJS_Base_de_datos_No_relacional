@@ -1,25 +1,14 @@
+# docker-compose.yml
+
 version: '3.3'
 
 services:
-    #esta es la base de datos mysql, osea con estas directivas es como se crea la base de datos en el contenedor
-    mysql:
-      image: mysql:8
-      environment:
-        - MYSQL_DB=my_db
-        - MYSQL_USER=root
-        - MYSQL_ROOT_PASSWORD=123456      
-      ports:
-        - '3307:3307'
-      volumes:
-        - ./mysql_data:/var/lib/mysql
-
-    #este es el visualizador de la DB mysql
-    phpmyadmin:
-      image: phpmyadmin/phpmyadmin
-      environment:
-        - MYSQL_ROOT_PASSWORD=123456 
-        - PMA_HOST=mysql
-      ports:
-        - "8080:80"
-      depends_on:
-        - mysql
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27017:27017"
+    volumes:
+    - ./mongo_data:/data/db
