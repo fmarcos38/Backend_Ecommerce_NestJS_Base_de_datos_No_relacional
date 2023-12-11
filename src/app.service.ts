@@ -7,7 +7,10 @@ export class AppService {
   
   //metodo para obtener las tareas de la DB
   async getTasks() {
-    return await this.database.collection('tasks').find({}).toArray();
+    return {
+      message: 'Tasks',
+      tasks: await this.database.collection('tasks').find({}).toArray(),
+    }
   }
   
 }

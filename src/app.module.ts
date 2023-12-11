@@ -6,11 +6,13 @@ import { ProductModule } from './products/product.module';
 import { UserModule } from './users/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongoClient } from 'mongodb';
+import { MongooseModule } from '@nestjs/mongoose';
+import { TaskModule } from './Tasks/task.module';
 //import { MongooseModule } from '@nestjs/mongoose';
 //import { MongoClient } from 'mongodb';
 
 //--conexion de prueba para la DB de mongoDB----------------------------------------
-const uri = 'mongodb://root:root@localhost:27017/?authMechanism=DEFAULT';
+/* const uri = 'mongodb://root:root@localhost:27017/?authMechanism=DEFAULT';
 const client = new MongoClient(uri);
 async function run() {
   try {
@@ -24,9 +26,17 @@ async function run() {
     await client.close();
   }
 }
-run().catch(console.error);
+run().catch(console.error); */
 //---------------------------------------------------------------------------------
 
 
-@Module({})
+@Module({
+  imports: [
+    MongooseModule.forRoot('mongodb://root:root@localhost:27017/?authMechanism=DEFAULT'),
+    TaskModule,
+    DatabaseModule,
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
 export class AppModule {}
