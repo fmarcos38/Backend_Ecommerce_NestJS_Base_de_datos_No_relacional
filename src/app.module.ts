@@ -2,13 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
-import { ProductModule } from './products/product.module';
-import { UserModule } from './users/user.module';
-import { ConfigModule } from '@nestjs/config';
-import { MongoClient } from 'mongodb';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TaskModule } from './Tasks/task.module';
-//import { MongooseModule } from '@nestjs/mongoose';
+import { ProductController } from './Products/controllers/product.controller';
+import { ProductService } from './Products/services/product.service';
+import { ProductsModule } from './Products/product.module';
 //import { MongoClient } from 'mongodb';
 
 //--conexion de prueba para la DB de mongoDB----------------------------------------
@@ -32,8 +30,10 @@ run().catch(console.error); */
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://root:root@localhost:27017/?authMechanism=DEFAULT'),
+    MongooseModule.forRoot('mongodb://root:root@localhost:27017/?authMechanism=DEFAULT'), //sin var de entorno
+    
     TaskModule,
+    ProductsModule,
     DatabaseModule,
   ],
   controllers: [AppController],
