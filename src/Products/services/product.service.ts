@@ -4,6 +4,7 @@ import { Db } from 'mongodb';
 import { Model } from 'mongoose';
 import { Product } from '../entities/product.entity';
 import { ObjectId } from 'mongodb';
+import { CreateProductDto, UpdateProductDto } from '../dtos/product.dto';
 
 @Injectable()
 export class ProductService {
@@ -29,4 +30,32 @@ export class ProductService {
         }
         return product;
     }
+
+    async create(data: CreateProductDto) {
+        const newProduct = new this.productModel(data);
+        await newProduct.save();
+        return {
+            message: 'Producto creado',
+            product: newProduct,
+        };
+    }
+
+    async update(id: string, changes: UpdateProductDto) {
+        const product = await this.database.collection('products').findOne({ _id: new ObjectId(id) });
+        if (!product) {
+            throw new NotFoundException(`Product #${id} not found`);
+        }
+        await this.productModel.updateOne({ _id: new ObjectId(id) }, { $set: changes }, { upsert: true });
+        return product;
+    }
+
+    async remove(id: string) {
+        const product = await this.database.collection('products').findOne({ _id: new ObjectId(id) });
+        if (!product) {
+            throw new NotFoundException(`Product #${id} not found`);
+        }
+        await this.productModel.deleteOne({ _id: new ObjectId(id) });
+        return product;
+    }
+
 }
