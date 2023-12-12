@@ -1,5 +1,5 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsNumber, IsPositive, IsUrl, IsOptional, Min } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsPositive, IsUrl, IsOptional, Min, ValidateIf } from 'class-validator';
 
 export class CreateProductDto {
     @IsString()
@@ -40,4 +40,13 @@ export class FilterProductsDto {
     @IsOptional()
     @Min(0)
     offset: number;      // Número de registros a ignorar
+
+    @IsOptional()
+    @Min(0)    
+    minPrice: number;    // Precio mínimo
+
+    //@ValidateIf((parametro) => parametro.minPrice)    // Si minPrice existe, entonces maxPrice tiene q venir
+    @IsOptional()
+    @IsPositive()
+    maxPrice: number;    // Precio máximo
 }

@@ -16,10 +16,39 @@ export class ProductService {
 
     async findAll(params?: FilterProductsDto) {
         const products = await this.productModel.find().exec();
-        if(!products) throw new Error('No se encontraron productos');
-        console.log("params:", params);
+        //sino hay prods
+        if(!products) throw new Error('No se encontraron productos');        
+        
         if(params){
             const { limit, offset } = params;
+            const { minPrice, maxPrice } = params;
+            //filtro por rango de precios
+            if(minPrice && maxPrice){
+                const products = await this.productModel.find({ price: { $gte: minPrice, $lte: maxPrice } }).exec();
+                return {
+                    message: 'Productos encontrados',
+                    productstotal: products.length,
+                    products,
+                };
+            }
+            //filtro por precio minimo hacia arriba
+            if(minPrice){
+                const products = await this.productModel.find({ price: { $gte: minPrice } }).exec();
+                return {
+                    message: 'Productos encontrados',
+                    productstotal: products.length,
+                    products,
+                };
+            }
+            //filtro por precio maximo hacia abajo
+            if(maxPrice){
+                const products = await this.productModel.find({ price: { $lte: maxPrice } }).exec();
+                return {
+                    message: 'Productos encontrados',
+                    productstotal: products.length,
+                    products,
+                };
+            }
             return {
                 message: 'Productos encontrados',
                 productstotal: products.length,
