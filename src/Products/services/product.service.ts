@@ -4,34 +4,49 @@ import { Db } from 'mongodb';
 import { Model } from 'mongoose';
 import { Product } from '../entities/product.entity';
 import { ObjectId } from 'mongodb';
-import { CreateProductDto, UpdateProductDto } from '../dtos/product.dto';
+import { CreateProductDto, FilterProductsDto, UpdateProductDto } from '../dtos/product.dto';
 
 @Injectable()
 export class ProductService {
 
     constructor(
-        @Inject('MONGO') private database: Db,
+        //@Inject('MONGO') private database: Db,
         @InjectModel(Product.name) private productModel: Model<Product>
     ) { }
 
-    async findAll() {
-        const products = await this.database.collection('products').find({}).toArray();
+    async findAll(params?: FilterProductsDto) {
+        const products = await this.productModel.find().exec();
         if(!products) throw new Error('No se encontraron productos');
+        console.log("params:", params);
+        if(params){
+            const { limit, offset } = params;
+            return {
+                message: 'Productos encontrados',
+                productstotal: products.length,
+                products: await this.productModel.find().skip(offset * limit).limit(limit).exec()
+            };
+        }
+
         return {
             message: 'Productos encontrados',
+            productstotal: products.length,
             products,
         };
     }
 
     async findOne(id: string) {
-        const product = await this.database.collection('products').findOne({ _id: new ObjectId(id) });
+        const product = await this.productModel.findById({ _id: new ObjectId(id) }).exec();
         if (!product) {
             throw new NotFoundException(`Product #${id} not found`);
         }
         return product;
     }
 
-    async create(data: CreateProductDto) {
+    async create(data: any) {
+        const respuesta = await this.findAll(); //console.log(prods);
+        const buscoProd = respuesta.products.find(prod => prod.name === data.name);
+        if(buscoProd) return 'El producto ya existe';
+
         const newProduct = new this.productModel(data);
         await newProduct.save();
         return {
@@ -41,21 +56,24 @@ export class ProductService {
     }
 
     async update(id: string, changes: UpdateProductDto) {
-        const product = await this.database.collection('products').findOne({ _id: new ObjectId(id) });
+        const product = await this.findOne(id); console.log(product);
         if (!product) {
             throw new NotFoundException(`Product #${id} not found`);
         }
-        await this.productModel.updateOne({ _id: new ObjectId(id) }, { $set: changes }, { upsert: true });
-        return product;
+        const newProd = await this.productModel.findOneAndUpdate({ _id: id }, { $set: changes }, { new: true }).exec(); // cons esta opc retorna el viejo Prod -> { upsert: true }
+        return newProd;
     }
 
     async remove(id: string) {
-        const product = await this.database.collection('products').findOne({ _id: new ObjectId(id) });
+        const product = await this.findOne(id);
         if (!product) {
             throw new NotFoundException(`Product #${id} not found`);
         }
-        await this.productModel.deleteOne({ _id: new ObjectId(id) });
-        return product;
+        await this.productModel.findByIdAndDelete({ _id: new ObjectId(id) });
+        return {
+            message: `Product #${id} deleted`,
+            product
+        }
     }
 
 }

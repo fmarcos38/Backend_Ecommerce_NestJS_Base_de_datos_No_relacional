@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, ConflictException, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ProductService } from '../services/product.service';
-import { ApiTags } from '@nestjs/swagger';
-import { CreateProductDto, UpdateProductDto } from '../dtos/product.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CreateProductDto, FilterProductsDto, UpdateProductDto } from '../dtos/product.dto';
 
 @ApiTags('products')
 @Controller('products')
@@ -9,8 +9,9 @@ export class ProductController {
     constructor(private readonly productService: ProductService) { }
 
     @Get()
-    async findAll() {
-        return this.productService.findAll();
+    @ApiOperation({ summary: 'List of products' }) // Swagger
+    getProducts(@Query() params: FilterProductsDto) {
+        return this.productService.findAll(params);
     }
 
     @Get('/:id')
@@ -19,8 +20,15 @@ export class ProductController {
     }
 
     @Post()
-    create(@Body() payload: CreateProductDto) {        
-        return this.productService.create(payload);
+    async create(@Body() body: CreateProductDto) {
+        try {
+        return await this.productService.create(body);
+        } catch (error) {
+        if (error.code === 11000) {
+            throw new ConflictException('Task already exists');
+        }
+        throw error;
+        }
     }
 
     @Put('/:id')
