@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateUserDto } from '../dtos/user.dto';
+import { CreateUserDto, FilterUsersDto } from '../dtos/user.dto';
 import { User } from '../entities/user.entity';
 import { ObjectId } from 'mongodb';
 
@@ -9,9 +9,18 @@ import { ObjectId } from 'mongodb';
 export class UserService {
     constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-    async findAll() { 
+    async findAll(params?: FilterUsersDto) { 
         const users = await this.userModel.find().exec();
         if(users[0] == null){return 'No se encontraron usuarios';}
+
+        if(params){
+            const { limit, offset } = params;
+            return {
+                message: 'Productos encontrados',
+                productstotal: users.length,
+                products: await this.userModel.find().skip(offset * limit).limit(limit),
+            };
+        }
         return users;
     }
 

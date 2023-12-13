@@ -28,11 +28,15 @@ export class Product extends Document {
     category: Record<string, any>; //Record<string, any> es un objeto que puede tener cualquier tipo de dato
 
     //para la relacion 1:1 referenciada con Brand
-    @Prop({
+    /* @Prop({
         type: Types.ObjectId,
         ref: Brand.name,
     })
-    brand: Brand | Types.ObjectId; //para el id de la marca puede ser de ttipo objeto o de tipo ID de mongo
+    brand: Brand | Types.ObjectId; */ //para el id de la marca puede ser de ttipo objeto o de tipo ID de mongo
+
+    //para la relacion 1:1 embebida con Brand REFERENCIADA
+    @Prop({ type: Types.ObjectId, ref: Brand.name })
+    brand: Brand | Types.ObjectId;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

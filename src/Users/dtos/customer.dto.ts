@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsArray, IsEmail, IsNotEmpty, IsString } from "class-validator";
 
 
 export class CreateCustomerDto{
@@ -17,6 +17,10 @@ export class CreateCustomerDto{
     @IsNotEmpty()
     @ApiProperty()
     readonly email: string;
+
+    //relacion 1:N embebida con orders
+    @ApiProperty()
+    readonly orders: string[]; //array de ids de orders
 }
 
 export class UpdateCustomerDto extends CreateCustomerDto{}
