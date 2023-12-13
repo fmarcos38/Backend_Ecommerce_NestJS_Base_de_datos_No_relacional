@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Db } from 'mongodb';
 import { Model } from 'mongoose';
 import { Product } from '../entities/product.entity';
 import { ObjectId } from 'mongodb';

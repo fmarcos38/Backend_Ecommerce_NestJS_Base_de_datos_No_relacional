@@ -5,6 +5,7 @@ import { DatabaseModule } from './database/database.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TaskModule } from './Tasks/task.module';
 import { ProductsModule } from './Products/product.module';
+import { UserModule } from './Users/user.module';
 //import { MongoClient } from 'mongodb';
 
 //--conexion de prueba para la DB de mongoDB----------------------------------------
@@ -32,6 +33,7 @@ run().catch(console.error); */
     
     TaskModule,
     ProductsModule,
+    UserModule,
     DatabaseModule,
   ],
   controllers: [AppController],
