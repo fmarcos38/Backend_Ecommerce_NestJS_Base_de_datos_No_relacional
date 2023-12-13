@@ -4,8 +4,6 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TaskModule } from './Tasks/task.module';
-import { ProductController } from './Products/controllers/product.controller';
-import { ProductService } from './Products/services/product.service';
 import { ProductsModule } from './Products/product.module';
 //import { MongoClient } from 'mongodb';
 

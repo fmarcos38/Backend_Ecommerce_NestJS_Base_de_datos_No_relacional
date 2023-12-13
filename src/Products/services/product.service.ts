@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Db } from 'mongodb';
 import { Model } from 'mongoose';
@@ -15,7 +15,7 @@ export class ProductService {
     ) { }
 
     async findAll(params?: FilterProductsDto) {
-        const products = await this.productModel.find().exec();
+        const products = await this.productModel.find().populate('brand', 'name');
         //sino hay prods
         if(!products) throw new Error('No se encontraron productos');        
         
@@ -24,7 +24,7 @@ export class ProductService {
             const { minPrice, maxPrice } = params;
             //filtro por rango de precios
             if(minPrice && maxPrice){
-                const products = await this.productModel.find({ price: { $gte: minPrice, $lte: maxPrice } }).exec();
+                const products = await this.productModel.find({ price: { $gte: minPrice, $lte: maxPrice } }).populate('brand');
                 return {
                     message: 'Productos encontrados',
                     productstotal: products.length,
@@ -33,7 +33,7 @@ export class ProductService {
             }
             //filtro por precio minimo hacia arriba
             if(minPrice){
-                const products = await this.productModel.find({ price: { $gte: minPrice } }).exec();
+                const products = await this.productModel.find({ price: { $gte: minPrice } }).populate('brand');
                 return {
                     message: 'Productos encontrados',
                     productstotal: products.length,
@@ -42,7 +42,7 @@ export class ProductService {
             }
             //filtro por precio maximo hacia abajo
             if(maxPrice){
-                const products = await this.productModel.find({ price: { $lte: maxPrice } }).exec();
+                const products = await this.productModel.find({ price: { $lte: maxPrice } }).populate('brand');
                 return {
                     message: 'Productos encontrados',
                     productstotal: products.length,
@@ -52,7 +52,7 @@ export class ProductService {
             return {
                 message: 'Productos encontrados',
                 productstotal: products.length,
-                products: await this.productModel.find().skip(offset * limit).limit(limit).exec()
+                products: await this.productModel.find().skip(offset * limit).limit(limit).populate('brand', 'name'),
             };
         }
 
@@ -64,14 +64,14 @@ export class ProductService {
     }
 
     async findOne(id: string) {
-        const product = await this.productModel.findById({ _id: new ObjectId(id) }).exec();
+        const product = await this.productModel.findById({ _id: new ObjectId(id) }).populate('brand', 'name');
         if (!product) {
             throw new NotFoundException(`Product #${id} not found`);
         }
         return product;
     }
 
-    async create(data: any) {
+    async create(data: CreateProductDto) {
         const respuesta = await this.findAll(); //console.log(prods);
         const buscoProd = respuesta.products.find(prod => prod.name === data.name);
         if(buscoProd) return 'El producto ya existe';

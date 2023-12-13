@@ -1,5 +1,6 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsNumber, IsPositive, IsUrl, IsOptional, Min, ValidateIf } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsPositive, IsUrl, IsOptional, Min, ValidateIf, ValidateNested, IsMongoId } from 'class-validator';
+import { CreateCategoryDto } from './category.dto';
 
 export class CreateProductDto {
     @IsString()
@@ -23,10 +24,21 @@ export class CreateProductDto {
     @ApiProperty() 
     readonly stock: number;
 
-    @IsUrl()
+    //@IsUrl()
     //@IsNotEmpty()
+    @IsString()
     @ApiProperty() 
     readonly image: string;
+
+    //para la relacion 1:1 con category
+    @IsNotEmpty()
+    @ValidateNested() //para validar que el objeto category tenga los campos requeridos(alidador en cascada)
+    @ApiProperty()
+    readonly category: CreateCategoryDto;
+
+    //para la relacion 1:1 referenciada con Brand
+    @IsMongoId()
+    readonly brand: string;
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}
