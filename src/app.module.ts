@@ -3,10 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { TaskModule } from './Tasks/task.module';
 import { ProductsModule } from './Products/product.module';
 import { UserModule } from './Users/user.module';
 //import { MongoClient } from 'mongodb';
+import { AuthModule } from './auth/auth.module';
 
 //--conexion de prueba para la DB de mongoDB----------------------------------------
 /* const uri = 'mongodb://root:root@localhost:27017/?authMechanism=DEFAULT';
@@ -30,11 +30,10 @@ run().catch(console.error); */
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://root:root@localhost:27017/?authMechanism=DEFAULT'), //sin var de entorno
-    
-    TaskModule,
     ProductsModule,
     UserModule,
     DatabaseModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
