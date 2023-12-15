@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto, FilterUsersDto } from '../dtos/user.dto';
@@ -35,7 +35,7 @@ export class UserService {
     //busca por email
     async findOneByEmail(email: string) {
         const user = await this.userModel.findOne({ email: email }); //find retorna un array y findOne retorna un objeto
-        if(!user) { throw new Error('No se encontro el usuario'); }
+        if(!user) { throw new UnauthorizedException('No se encontro el usuario'); }
 
         return user;
     }
