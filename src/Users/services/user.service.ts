@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { CreateUserDto, FilterUsersDto } from '../dtos/user.dto';
 import { User } from '../entities/user.entity';
 import { ObjectId } from 'mongodb';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -31,7 +32,15 @@ export class UserService {
         return user;
     }
 
-    async create(data: CreateUserDto) {
+    //busca por email
+    async findOneByEmail(email: string) {
+        const user = await this.userModel.findOne({ email: email }); //find retorna un array y findOne retorna un objeto
+        if(!user) { throw new Error('No se encontro el usuario'); }
+
+        return user;
+    }
+
+    /* async create(data: CreateUserDto) {
         const users = await this.userModel.find();
         const buscoUserByEmail = users.find((user) => user.email === data.email);
         if(buscoUserByEmail) return 'El user ya esta registrado';
@@ -41,8 +50,29 @@ export class UserService {
             message: 'Usuario creado',
             createdUser,
         };
-    }
+    } */
 
+    //create user con pass encriptado
+    async create(data: CreateUserDto) {
+        const users = await this.userModel.find();
+        const buscoUserByEmail = users.find((user) => user.email === data.email);
+        if(buscoUserByEmail) return 'El user ya esta registrado';
+
+        //crear user
+        const createdUser = new this.userModel(data);
+        //encriptar password
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+        createdUser.password = hashedPassword;
+        //guardar user 
+        const newUser = createdUser.save();
+        if(!newUser) return 'No se pudo crear el usuario';
+        //const { password, ...resp } = (await newUser).toJSON();
+        
+        return {
+            message: 'Usuario creado',
+            newUser,
+        };
+    }
     async update(id: string, changes: CreateUserDto) {
         const user = await this.userModel.findById({ _id: new ObjectId(id) });
         if(!user) return 'No se encontro el usuario';

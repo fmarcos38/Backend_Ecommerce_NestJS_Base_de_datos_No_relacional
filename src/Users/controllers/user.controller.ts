@@ -1,20 +1,22 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, SetMetadata, UseGuards } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { CreateUserDto } from '../dtos/user.dto';
 import { ApikeyGuard } from 'src/auth/guards/apikey.guard';
+import { Public } from 'src/auth/decorator/public.decorator';
 
+@UseGuards(ApikeyGuard) //proteger todos los endpoints de este controlador
 @Controller('user')
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
-    //ejemplo de endpoint con implementacion de guard
-    //lo voy a proteger con el guard que cree
-    @UseGuards(ApikeyGuard)
+    //@SetMetadata('isPublic', true) //DESproteger un endpoint en especifico
+    @Public() //tambien puedo usar el decorador PERSONALIZADO @Public() para DESproteger un endpoint
     @Get('/saludo')
     getSaludo() {
         return 'Hola mundo';
     }
-
+    
+    //sin header = 123 no tengo acceso a los endpoints
     @Get()
     getUsers() {
         return this.userService.findAll();
@@ -25,6 +27,11 @@ export class UserController {
         return this.userService.findOne(id);
     }
 
+    @Get('/email/:email')
+    async getUserByEmail(@Param('email') email: string) {
+        return this.userService.findOneByEmail(email);
+    }
+    
     @Post()
     async createUser(@Body() data: CreateUserDto) {
         return this.userService.create(data);
