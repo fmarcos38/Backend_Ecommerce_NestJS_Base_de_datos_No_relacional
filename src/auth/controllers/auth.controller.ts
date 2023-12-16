@@ -6,7 +6,7 @@ import { Request } from 'express';
 export class AuthController {
 
     @UseGuards(AuthGuard('local')) //local es el nombre de la estrategia, en este punto ES el gurad el q hace toda la logica del login
-    @Post()
+    @Post('login')
     login(@Req() req: Request){
         return req.user;
     }
@@ -14,7 +14,7 @@ export class AuthController {
 
 
 /*
-endpoint: http://localhost:3000/auth
+endpoint: http://localhost:3000/auth/login
 method: POST
 body:
 {

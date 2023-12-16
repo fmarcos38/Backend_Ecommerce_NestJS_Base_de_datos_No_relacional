@@ -6,6 +6,7 @@ export default registerAs('config', () => {
       dbName: process.env.MONGO_DB,
       dbUri: 'mongodb://root:root@localhost:27017/?authMechanism=DEFAULT',
       apikey: process.env.API_KEY,
+      jwtSecret: process.env.JWT_SECRET,
     },
   };
 });;
