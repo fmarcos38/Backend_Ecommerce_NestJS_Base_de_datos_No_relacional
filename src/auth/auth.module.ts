@@ -32,7 +32,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       }
     }), */
   ], //me traigo el userModule --> para usar sus metodos desde el authService
-  providers: [AuthService, LocalStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy], //inyecto las strategies
   controllers: [AuthController]
 })
 export class AuthModule {}

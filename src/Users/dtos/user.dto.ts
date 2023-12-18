@@ -21,7 +21,20 @@ export class CreateUserDto{
     readonly role: string;
 }
 
-export class UpdateUserDto extends PartialType(CreateUserDto){}
+export class UpdateUserDto {
+    @IsString()
+    @IsEmail()
+    @ApiProperty()
+    readonly email: string;
+
+    @IsString()
+    @ApiProperty()
+    readonly password: string;
+
+    @IsString()
+    @ApiProperty()
+    readonly role: string;
+}
 
 export class FilterUsersDto {
 

@@ -70,7 +70,7 @@ export class UserService {
         
         return {
             message: 'Usuario creado',
-            newUser,
+            newUser, //no me muestra esto en el postman
         };
     }
     async update(id: string, changes: CreateUserDto) {

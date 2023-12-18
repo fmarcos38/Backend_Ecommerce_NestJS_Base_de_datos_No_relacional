@@ -4,7 +4,7 @@ import { CreateUserDto } from '../dtos/user.dto';
 import { ApikeyGuard } from 'src/auth/guards/apikey.guard';
 import { Public } from 'src/auth/decorator/public.decorator';
 
-@UseGuards(ApikeyGuard) //proteger todos los endpoints de este controlador
+//@UseGuards(ApikeyGuard) //proteger todos los endpoints de este controlador
 @Controller('user')
 export class UserController {
     constructor(private readonly userService: UserService) {}
